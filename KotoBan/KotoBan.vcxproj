@@ -142,6 +142,7 @@
     <ClCompile Include="..\src\Application.cpp" />
     <ClCompile Include="..\src\main.cpp" />
     <ClCompile Include="..\src\RenderDevice.cpp" />
+    <ClCompile Include="..\src\TextureManager.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\external\httplib\httplib.h" />
@@ -154,10 +155,12 @@
     <ClInclude Include="..\external\imgui\imstb_textedit.h" />
     <ClInclude Include="..\external\imgui\imstb_truetype.h" />
     <ClInclude Include="..\external\json\json.hpp" />
+    <ClInclude Include="..\external\stb\stb_image.h" />
     <ClInclude Include="..\src\Application.h" />
     <ClInclude Include="..\src\BangumiAPI.h" />
     <ClInclude Include="..\src\NewTab.h" />
     <ClInclude Include="..\src\RenderDevice.h" />
+    <ClInclude Include="..\src\TextureManager.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

@@ -1,14 +1,17 @@
 #define _CRT_SECURE_NO_WARNINGS
 #pragma warning(disable : 4996)
-#include "httplib/httplib.h"
+#include <httplib/httplib.h>
+
 #include "Application.h"
 #include "RenderDevice.h"
 #include "NewTab.h"
 #include "BangumiAPI.h"
-#include "imgui/imgui.h"
-#include "imgui/imgui_impl_win32.h"
-#include "imgui/imgui_impl_dx11.h"
-#include "json/json.hpp"
+#include "TextureManager.h"
+
+#include <imgui/imgui.h>
+#include <imgui/imgui_impl_win32.h>
+#include <imgui/imgui_impl_dx11.h>
+#include <json/json.hpp>
 
 Application::Application()
 {
@@ -101,6 +104,17 @@ void Application::UpdateTabs()
             if (mChatHistory.empty())
             {
                 ImGui::TextDisabled("暂无数据，请点击刷新...");
+                static bool aTestImage = false;
+                static ID3D11ShaderResourceView* anImage = nullptr;
+                if (!aTestImage)
+                {
+                    anImage = DownloadImage(mRenderDevice.GetDevice(), "");
+                    aTestImage = true;
+                }
+                if (anImage)
+                {
+                    ImGui::Image((ImTextureID)anImage, ImVec2(266, 266), ImVec2(0, 0), ImVec2(1, 1));
+                }
             }
             else
             {
@@ -129,33 +143,31 @@ void Application::UpdateTabs()
 
 void Application::FetchMessages()
 {
-    for (Message* msg : mChatHistory)
-        delete msg;
+    for (Message* aMessage : mChatHistory)
+        delete aMessage;
 
-    httplib::Client cli("https://bgmchat.ry.mk");
-    httplib::Headers headers = { { "User-Agent", "866905/KotoBan/(Developing Version)" } };
+    httplib::Client aClient("https://bgmchat.ry.mk");
+    httplib::Headers aHeaders = { { "User-Agent", "866905/KotoBan/(Developing Version)" } };
 
-    if (auto res = cli.Get("/api/messages", headers))
+    if (auto aRes = aClient.Get("/api/messages", aHeaders))
     {
-        if (res->status != 200)
+        if (aRes->status != 200)
             return;
 
-        auto data = nlohmann::json::parse(res->body);
+        auto data = nlohmann::json::parse(aRes->body);
         std::lock_guard<std::mutex> lock(mChatMutex);
-        bool hasNew = false;
         for (auto& item : data)
         {
             int currentId = item["id"].get<int>();
             if (currentId > mLastMessageId)
             {
-                Message* msg = new Message();
-                msg->id = currentId;
-                msg->nickname = item["nickname"].get<std::string>();
-                msg->content = item["message"].get<std::string>();
+                Message* aMessage = new Message();
+                aMessage->id = currentId;
+                aMessage->nickname = item["nickname"].get<std::string>();
+                aMessage->content = item["message"].get<std::string>();
 
-                mChatHistory.push_back(msg);
+                mChatHistory.push_back(aMessage);
                 mLastMessageId = currentId;
-                hasNew = true;
             }
         }
     }
