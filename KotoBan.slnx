@@ -1,0 +1,7 @@
+<Solution>
+  <Configurations>
+    <Platform Name="x64" />
+    <Platform Name="x86" />
+  </Configurations>
+  <Project Path="KotoBan/KotoBan.vcxproj" Id="39a1106c-0c3a-4691-9da3-5bc3ff7bbbdc" />
+</Solution>
